@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Four Walls — Commercial Cleaning Pricing Calculator</title>
+  <meta name="description" content="Get an instant estimate for professional commercial cleaning services. Office, medical, and property management pricing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    #root { min-height: 100vh; }
+
+    /* ── Tokens ─────────────────────────────── */
+    :root {
+      --dark: #012622;
+      --primary: #003B36;
+      --sage: #CDC392;
+      --lavender-light: #E5D9F2;
+      --lavender: #CDC1FF;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.06);
+      --shadow-md: 0 4px 20px rgba(0,0,0,.08);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,.12);
+      --transition: .2s ease;
+    }
+
+    /* ── Utility ────────────────────────────── */
+    .container { max-width: 1040px; margin: 0 auto; padding: 24px 16px; }
+    @media (min-width: 640px) { .container { padding: 32px 24px; } }
+    @media (min-width: 1024px) { .container { padding: 40px 32px; } }
+
+    /* ── Header ─────────────────────────────── */
+    .header { text-align: center; margin-bottom: 32px; }
+    .header-logo {
+      display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    }
+    .header-logo-icon {
+      width: 40px; height: 40px; background: var(--primary); border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 15px;
+    }
+    .header-logo-text { font-size: 26px; font-weight: 700; color: var(--dark); }
+    .header-sub { font-size: 14px; color: #64748b; }
+    .header-tagline {
+      font-size: 13px; color: var(--sage); margin-top: 4px;
+      font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+    }
+
+    /* ── Section Labels ─────────────────────── */
+    .section-label {
+      font-size: 12px; font-weight: 600; color: #475569;
+      text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px;
+    }
+
+    /* ── Vertical Buttons ──────────────────── */
+    .vertical-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .vertical-btn {
+      padding: 10px 20px; border-radius: var(--radius-sm);
+      border: 1px solid #e2e8f0; background: #fff; color: #475569;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: all var(--transition); white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .vertical-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .vertical-btn.active {
+      border: 2px solid var(--primary); background: var(--primary); color: #fff;
+    }
+    @media (max-width: 479px) {
+      .vertical-btn { flex: 1 1 calc(50% - 4px); text-align: center; padding: 12px 8px; }
+    }
+
+    /* ── Sqft Panel ─────────────────────────── */
+    .sqft-panel {
+      background: #fff; border-radius: var(--radius-md); padding: 20px;
+      border: 1px solid #e2e8f0; margin-bottom: 28px; box-shadow: var(--shadow-sm);
+    }
+    .sqft-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+    .sqft-value { font-size: 24px; font-weight: 700; color: var(--dark); }
+    .sqft-range {
+      width: 100%; height: 6px; appearance: none; -webkit-appearance: none;
+      background: #e2e8f0; border-radius: 999px; outline: none; cursor: pointer;
+    }
+    .sqft-range::-webkit-slider-thumb {
+      appearance: none; -webkit-appearance: none;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--primary); border: 3px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2); cursor: pointer;
+    }
+    .sqft-range::-moz-range-thumb {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--primary); border: 3px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2); cursor: pointer;
+    }
+    .sqft-bounds { display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-top: 6px; }
+    .sqft-presets { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
+    .sqft-preset {
+      padding: 6px 14px; border-radius: 6px; border: 1px solid #e2e8f0;
+      background: #fff; color: #64748b; font-size: 12px; font-weight: 500;
+      cursor: pointer; transition: all var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sqft-preset:hover { border-color: var(--primary); color: var(--primary); }
+    .sqft-preset.active { border-color: var(--primary); background: var(--primary); color: #fff; }
+
+    /* ── Tier Cards ─────────────────────────── */
+    .tiers-grid {
+      display: grid; gap: 16px; margin-bottom: 28px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 640px) { .tiers-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .tier-card {
+      border: 1px solid #e2e8f0; border-radius: var(--radius-md);
+      padding: 20px; background: #fff; cursor: pointer;
+      transition: all var(--transition); position: relative;
+      box-shadow: var(--shadow-sm);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tier-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .tier-card.selected { border-width: 2px; box-shadow: var(--shadow-md); }
+    .tier-card.selected:hover { transform: none; }
+
+    .tier-badge {
+      position: absolute; top: -10px; right: 12px;
+      color: #fff; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+    }
+    .tier-name { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .tier-freq { font-size: 13px; color: #64748b; margin-bottom: 16px; }
+    .tier-price { font-size: 30px; font-weight: 700; color: var(--dark); line-height: 1.1; }
+    .tier-price-sub { font-size: 14px; font-weight: 400; color: #94a3b8; }
+    .tier-range { font-size: 12px; color: #94a3b8; margin-bottom: 16px; margin-top: 2px; }
+
+    .tier-meta { border-top: 1px solid; padding-top: 12px; margin-bottom: 8px; }
+    .tier-meta-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+    .tier-meta-label { color: #64748b; }
+    .tier-meta-value { font-weight: 600; color: var(--dark); }
+
+    .tier-annual { border-top: 1px solid; padding-top: 12px; margin-bottom: 12px; }
+    .tier-annual-label { font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+    .tier-annual-value { font-size: 16px; font-weight: 600; color: var(--dark); }
+
+    .tier-includes { border-top: 1px solid; padding-top: 12px; margin-top: 8px; }
+    .tier-includes-label { font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 6px; }
+    .tier-includes-item { font-size: 12px; color: #334155; margin-bottom: 3px; display: flex; gap: 6px; }
+    .tier-check { flex-shrink: 0; }
+
+    /* Mobile: accordion-style includes */
+    .tier-includes-toggle {
+      display: none; font-size: 12px; font-weight: 600; cursor: pointer;
+      padding: 8px 0; color: var(--primary); border: none; background: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (max-width: 639px) {
+      .tier-includes-toggle { display: block; }
+      .tier-includes-list { display: none; }
+      .tier-includes-list.open { display: block; }
+    }
+
+    /* ── Add-ons ────────────────────────────── */
+    .addons-panel {
+      background: #fff; border-radius: var(--radius-md); padding: 20px;
+      border: 1px solid #e2e8f0; margin-bottom: 28px; box-shadow: var(--shadow-sm);
+    }
+    .addons-grid {
+      display: grid; grid-template-columns: 1fr; gap: 8px;
+    }
+    @media (min-width: 480px) { .addons-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 768px) { .addons-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .addon-card {
+      padding: 12px 14px; border-radius: var(--radius-sm);
+      border: 1px solid #e2e8f0; background: #fff; cursor: pointer;
+      transition: all var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .addon-card:hover { border-color: var(--primary); }
+    .addon-card.active { border: 2px solid var(--primary); background: var(--lavender-light); }
+    .addon-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+    .addon-cost { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+    /* ── Summary ────────────────────────────── */
+    .summary {
+      background: var(--dark); border-radius: var(--radius-lg);
+      padding: 24px; color: #fff; margin-bottom: 24px;
+    }
+    @media (min-width: 640px) { .summary { padding: 28px 32px; } }
+
+    .summary-label {
+      font-size: 12px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--sage); margin-bottom: 16px;
+    }
+    .summary-numbers { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
+    .summary-numbers > div { min-width: 0; }
+    .summary-num-label { font-size: 12px; color: var(--sage); margin-bottom: 2px; }
+    .summary-num-value { font-size: 28px; font-weight: 700; line-height: 1.2; }
+    @media (min-width: 640px) { .summary-num-value { font-size: 36px; } }
+    .summary-num-value.sage { color: var(--sage); }
+    .summary-num-suffix { font-size: 14px; color: #94a3b8; }
+
+    .summary-details {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+      border-top: 1px solid var(--primary); padding-top: 16px;
+    }
+    @media (min-width: 640px) { .summary-details { grid-template-columns: repeat(3, 1fr); } }
+    .summary-detail-label { font-size: 11px; color: var(--sage); }
+    .summary-detail-value { font-size: 14px; font-weight: 600; }
+
+    .summary-addons { border-top: 1px solid var(--primary); padding-top: 12px; margin-top: 12px; }
+    .summary-addons-label { font-size: 11px; color: var(--sage); margin-bottom: 6px; }
+    .summary-addon-item { font-size: 13px; color: #e2e8f0; margin-bottom: 2px; }
+
+    /* ── CTA ─────────────────────────────────── */
+    .cta-wrap { text-align: center; margin-bottom: 16px; }
+    .cta-btn {
+      padding: 14px 40px; background: var(--primary); color: #fff; border: none;
+      border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer;
+      letter-spacing: .3px; transition: all var(--transition); width: 100%;
+      max-width: 360px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cta-btn:hover { background: var(--dark); }
+    @media (min-width: 480px) { .cta-btn { width: auto; } }
+
+    /* ── Proposal ────────────────────────────── */
+    .proposal {
+      background: #fff; border: 1px solid #e2e8f0; border-radius: var(--radius-md);
+      padding: 20px; margin-top: 8px; box-shadow: var(--shadow-sm);
+      animation: slideDown .3s ease;
+    }
+    @media (min-width: 640px) { .proposal { padding: 28px; } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .proposal-title { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .proposal-date { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+    .proposal-body { font-size: 14px; color: #334155; line-height: 1.7; }
+    .proposal-body p { margin-bottom: 12px; }
+    .proposal-guarantee {
+      margin-top: 16px; padding: 16px; background: #f0fdfa;
+      border-radius: var(--radius-sm); border: 1px solid rgba(0,59,54,.25);
+    }
+    .proposal-guarantee-title { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
+    .proposal-guarantee-text { font-size: 13px; color: #334155; }
+    .proposal-cta-wrap {
+      margin-top: 20px; text-align: center; padding: 20px;
+      background: var(--dark); border-radius: 10px;
+    }
+    .proposal-cta-label { font-size: 13px; color: var(--sage); margin-bottom: 6px; }
+    .proposal-cta-btn {
+      display: inline-block; padding: 12px 36px; background: var(--primary);
+      color: #fff; border-radius: var(--radius-sm); font-size: 18px;
+      font-weight: 700; text-decoration: none; letter-spacing: .5px;
+      transition: all var(--transition);
+    }
+    .proposal-cta-btn:hover { background: #00524b; }
+    .proposal-cta-sub { font-size: 12px; color: #94a3b8; margin-top: 8px; }
+
+    /* ── Footer ──────────────────────────────── */
+    .footer { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 24px; padding-bottom: 32px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel" data-type="module">
+    const { useState, useCallback } = React;
+
+    /* ── Brand & Data ───────────────────────── */
+    const BRAND = {
+      dark: "#012622",
+      primary: "#003B36",
+      sage: "#CDC392",
+      lavenderLight: "#E5D9F2",
+      lavender: "#CDC1FF",
+    };
+
+    const TIERS = {
+      office: {
+        label: "Office & Commercial",
+        icon: "🏢",
+        tiers: [
+          {
+            name: "Essential", frequency: "2x / week", low: 0.07, high: 0.13,
+            color: BRAND.primary, bg: "#f0fdfa", border: "#99f6e4",
+            contract: "Month-to-month", discount: 0, sla: "Next-business-day",
+            includes: [
+              "Trash & liner replacement", "Vacuuming all carpeted areas",
+              "Restroom full sanitation & restock", "Surface wiping (desks, counters)",
+              "Kitchen/break room wipe-down", "Monthly digital inspection report",
+            ],
+          },
+          {
+            name: "Professional", frequency: "3x / week", low: 0.12, high: 0.20,
+            color: "#1d4ed8", bg: "#eff6ff", border: "#93c5fd",
+            contract: "6-month minimum", discount: 5, sla: "Same-day",
+            includes: [
+              "Everything in Essential", "Hard floor mopping & care",
+              "Kitchen deep clean", "Glass & mirror cleaning",
+              "EPA Safer Choice green products", "Bi-weekly walkthrough + report",
+              "Dedicated account manager",
+            ],
+          },
+          {
+            name: "Premier", frequency: "5x / week", low: 0.18, high: 0.30,
+            color: "#7c3aed", bg: BRAND.lavenderLight, border: BRAND.lavender,
+            contract: "12-month term", discount: 10, sla: "4-hour response",
+            includes: [
+              "Everything in Professional", "Daily high-touch disinfection",
+              "Carpet spot treatment", "Supply management included",
+              "Real-time client dashboard", "Weekly walkthrough + live access",
+              "Quarterly business review", "Free quarterly deep clean",
+            ],
+          },
+        ],
+      },
+      medical: {
+        label: "Medical & Healthcare",
+        icon: "🏥",
+        tiers: [
+          {
+            name: "Clinical Standard", frequency: "3x / week", low: 0.15, high: 0.23,
+            color: BRAND.primary, bg: "#f0fdfa", border: "#99f6e4",
+            contract: "6-month minimum", discount: 0, sla: "Same-day",
+            includes: [
+              "Healthcare-grade disinfection", "Exam room turnover cleaning",
+              "Waiting area sanitization", "Background-checked staff",
+              "Healthcare protocol training", "Monthly compliance summary",
+            ],
+          },
+          {
+            name: "Clinical Plus", frequency: "5x / week", low: 0.20, high: 0.32,
+            color: "#1d4ed8", bg: "#eff6ff", border: "#93c5fd",
+            contract: "12-month term", discount: 5, sla: "4-hour response",
+            includes: [
+              "Everything in Clinical Standard", "OSHA-compliant protocols",
+              "EPA-registered disinfectants", "Biohazard-ready procedures",
+              "HIPAA-aware certified staff", "Bi-weekly photo documentation",
+            ],
+          },
+          {
+            name: "Clinical Elite", frequency: "Daily + on-call", low: 0.32, high: 0.45,
+            color: "#7c3aed", bg: BRAND.lavenderLight, border: BRAND.lavender,
+            contract: "24-month MSA", discount: 10, sla: "2-hour response",
+            includes: [
+              "Everything in Clinical Plus", "Full infection-control program",
+              "CDC guidelines-aligned protocols", "Air quality management",
+              "Compliance audit trail", "Dedicated assigned team",
+              "Real-time digital dashboard", "Weekend on-call availability",
+            ],
+          },
+        ],
+      },
+      property: {
+        label: "Property Management",
+        icon: "🏘️",
+        tiers: [
+          {
+            name: "Portfolio Starter", frequency: "1–3 properties", low: 0.08, high: 0.16,
+            color: BRAND.primary, bg: "#f0fdfa", border: "#99f6e4",
+            contract: "Month-to-month", discount: 0, sla: "48-hour resolution",
+            includes: [
+              "Standard per-property pricing", "Walkthrough per property",
+              "Single point of contact", "Standard scheduling", "Monthly reporting",
+            ],
+          },
+          {
+            name: "Portfolio Pro", frequency: "4–10 properties", low: 0.07, high: 0.14,
+            color: "#1d4ed8", bg: "#eff6ff", border: "#93c5fd",
+            contract: "12-month portfolio", discount: 10, sla: "24-hour resolution",
+            includes: [
+              "8–12% volume discount", "Dedicated onboarding coordinator",
+              "Dedicated account manager", "Flexible tenant scheduling",
+              "After-hours availability", "Bi-weekly syncs",
+              "Backup crew guarantee", "Free quarterly deep clean/property",
+            ],
+          },
+          {
+            name: "Portfolio Enterprise", frequency: "11+ properties", low: 0.06, high: 0.12,
+            color: "#7c3aed", bg: BRAND.lavenderLight, border: BRAND.lavender,
+            contract: "24-month MSA", discount: 15, sla: "Same-day resolution",
+            includes: [
+              "Custom enterprise pricing", "Full portfolio audit + custom SOPs",
+              "Named account team", "White-label option available",
+              "Weekly reporting", "Quarterly strategic reviews",
+              "Guaranteed backup crew on standby", "Annual rate freeze",
+              "Free property onboarding at renewal",
+            ],
+          },
+        ],
+      },
+    };
+
+    const ADDONS = [
+      { name: "Window Cleaning", monthlyCost: 150, unit: "/visit" },
+      { name: "Carpet Deep Extraction", monthlyCost: 200, unit: "/quarter" },
+      { name: "Day Porter Service", monthlyCost: 2200, unit: "/month" },
+      { name: "Supply Management", monthlyCost: 0, unit: "15-20% markup", pct: true },
+      { name: "Floor Strip & Wax", monthlyCost: 350, unit: "/semi-annual" },
+      { name: "Pressure Washing", monthlyCost: 175, unit: "/quarter" },
+    ];
+
+    function fmt(n) {
+      return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
+    }
+
+    /* ── Tier Card ───────────────────────────── */
+    function TierCard({ tier, sqft, isSelected, onSelect }) {
+      const [showIncludes, setShowIncludes] = useState(false);
+      const monthlyLow = Math.round(sqft * tier.low);
+      const monthlyHigh = Math.round(sqft * tier.high);
+      const mid = Math.round((monthlyLow + monthlyHigh) / 2);
+
+      return (
+        <div
+          onClick={onSelect}
+          className={`tier-card${isSelected ? " selected" : ""}`}
+          style={{
+            borderColor: isSelected ? tier.color : undefined,
+            background: isSelected ? tier.bg : undefined,
+          }}
+        >
+          {tier.discount > 0 && (
+            <div className="tier-badge" style={{ background: tier.color }}>
+              SAVE {tier.discount}%
+            </div>
+          )}
+
+          <div className="tier-name" style={{ color: tier.color }}>{tier.name}</div>
+          <div className="tier-freq">{tier.frequency}</div>
+
+          <div className="tier-price">
+            {fmt(mid)}<span className="tier-price-sub">/mo</span>
+          </div>
+          <div className="tier-range">Range: {fmt(monthlyLow)} – {fmt(monthlyHigh)}/mo</div>
+
+          <div className="tier-annual" style={{ borderColor: tier.border }}>
+            <div className="tier-annual-label">ANNUAL ESTIMATE</div>
+            <div className="tier-annual-value">{fmt(monthlyLow * 12)} – {fmt(monthlyHigh * 12)}</div>
+          </div>
+
+          <div className="tier-meta" style={{ borderColor: tier.border }}>
+            <div className="tier-meta-row">
+              <span className="tier-meta-label">Contract</span>
+              <span className="tier-meta-value">{tier.contract}</span>
+            </div>
+            <div className="tier-meta-row">
+              <span className="tier-meta-label">Response SLA</span>
+              <span className="tier-meta-value">{tier.sla}</span>
+            </div>
+            <div className="tier-meta-row">
+              <span className="tier-meta-label">Per sq ft</span>
+              <span className="tier-meta-value">${tier.low.toFixed(2)} – ${tier.high.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <div className="tier-includes" style={{ borderColor: tier.border }}>
+            <div className="tier-includes-label">INCLUDES</div>
+            <button
+              className="tier-includes-toggle"
+              onClick={(e) => { e.stopPropagation(); setShowIncludes(!showIncludes); }}
+            >
+              {showIncludes ? "Hide details ▲" : "Show details ▼"}
+            </button>
+            <div className={`tier-includes-list${showIncludes ? " open" : ""}`}>
+              {tier.includes.map((item, i) => (
+                <div key={i} className="tier-includes-item">
+                  <span className="tier-check" style={{ color: tier.color }}>✓</span>
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ── Main Calculator ─────────────────────── */
+    function FourWallsCalculator() {
+      const [vertical, setVertical] = useState("office");
+      const [sqft, setSqft] = useState(5000);
+      const [selectedTier, setSelectedTier] = useState(1);
+      const [selectedAddons, setSelectedAddons] = useState([]);
+      const [showProposal, setShowProposal] = useState(false);
+
+      const data = TIERS[vertical];
+      const tier = data.tiers[selectedTier];
+      const midMonthly = Math.round(sqft * (tier.low + tier.high) / 2);
+      const addonTotal = selectedAddons.reduce((sum, idx) => {
+        const a = ADDONS[idx];
+        return a.pct ? sum : sum + a.monthlyCost;
+      }, 0);
+      const totalMonthly = midMonthly + addonTotal;
+
+      const toggleAddon = useCallback((idx) => {
+        setSelectedAddons((prev) =>
+          prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
+        );
+      }, []);
+
+      return (
+        <div className="container">
+          {/* Header */}
+          <div className="header">
+            <div className="header-logo">
+              <div className="header-logo-icon">FW</div>
+              <span className="header-logo-text">Four Walls</span>
+            </div>
+            <div className="header-sub">Commercial Cleaning Pricing Calculator</div>
+            <div className="header-tagline">Every Surface. Every Time.</div>
+          </div>
+
+          {/* Vertical Selector */}
+          <div className="section-label">Facility Type</div>
+          <div className="vertical-bar">
+            {Object.entries(TIERS).map(([key, val]) => (
+              <button
+                key={key}
+                className={`vertical-btn${vertical === key ? " active" : ""}`}
+                onClick={() => { setVertical(key); setSelectedTier(1); }}
+              >
+                <span style={{ marginRight: 6 }}>{val.icon}</span>
+                {val.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Square Footage */}
+          <div className="sqft-panel">
+            <div className="sqft-header">
+              <div className="section-label" style={{ margin: 0 }}>Total Cleanable Square Footage</div>
+              <div className="sqft-value">{sqft.toLocaleString()} sq ft</div>
+            </div>
+            <input
+              type="range" min={500} max={50000} step={500} value={sqft}
+              onChange={(e) => setSqft(Number(e.target.value))}
+              className="sqft-range"
+            />
+            <div className="sqft-bounds">
+              <span>500 sq ft</span>
+              <span>50,000 sq ft</span>
+            </div>
+            <div className="sqft-presets">
+              {[1000, 2500, 5000, 10000, 20000, 40000].map((v) => (
+                <button
+                  key={v}
+                  className={`sqft-preset${sqft === v ? " active" : ""}`}
+                  onClick={() => setSqft(v)}
+                >
+                  {v.toLocaleString()}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Tier Cards */}
+          <div className="section-label">Select Your Service Tier</div>
+          <div className="tiers-grid">
+            {data.tiers.map((t, i) => (
+              <TierCard
+                key={t.name} tier={t} sqft={sqft}
+                isSelected={selectedTier === i}
+                onSelect={() => setSelectedTier(i)}
+              />
+            ))}
+          </div>
+
+          {/* Add-ons */}
+          <div className="addons-panel">
+            <div className="section-label" style={{ marginBottom: 12 }}>Add-On Services (Optional)</div>
+            <div className="addons-grid">
+              {ADDONS.map((addon, idx) => (
+                <div
+                  key={idx}
+                  className={`addon-card${selectedAddons.includes(idx) ? " active" : ""}`}
+                  onClick={() => toggleAddon(idx)}
+                >
+                  <div className="addon-name">{addon.name}</div>
+                  <div className="addon-cost">
+                    {addon.pct ? addon.unit : `${fmt(addon.monthlyCost)} ${addon.unit}`}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Summary */}
+          <div className="summary">
+            <div className="summary-label">Your Four Walls Estimate</div>
+            <div className="summary-numbers">
+              <div>
+                <div className="summary-num-label">Monthly Estimate</div>
+                <div className="summary-num-value">{fmt(totalMonthly)}</div>
+              </div>
+              <div>
+                <div className="summary-num-label">Annual Estimate</div>
+                <div className="summary-num-value">{fmt(totalMonthly * 12)}</div>
+              </div>
+              {tier.discount > 0 && (
+                <div>
+                  <div className="summary-num-label">Contract Savings</div>
+                  <div className="summary-num-value sage">
+                    {fmt(Math.round(totalMonthly * 12 * (tier.discount / 100)))}
+                    <span className="summary-num-suffix">/yr</span>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="summary-details">
+              <div><div className="summary-detail-label">Facility Type</div><div className="summary-detail-value">{data.label}</div></div>
+              <div><div className="summary-detail-label">Service Tier</div><div className="summary-detail-value">{tier.name}</div></div>
+              <div><div className="summary-detail-label">Square Footage</div><div className="summary-detail-value">{sqft.toLocaleString()} sq ft</div></div>
+              <div><div className="summary-detail-label">Contract Term</div><div className="summary-detail-value">{tier.contract}</div></div>
+              <div><div className="summary-detail-label">Response SLA</div><div className="summary-detail-value">{tier.sla}</div></div>
+              <div><div className="summary-detail-label">Frequency</div><div className="summary-detail-value">{tier.frequency}</div></div>
+            </div>
+            {selectedAddons.length > 0 && (
+              <div className="summary-addons">
+                <div className="summary-addons-label">ADD-ONS INCLUDED</div>
+                {selectedAddons.map((idx) => (
+                  <div key={idx} className="summary-addon-item">
+                    ✓ {ADDONS[idx].name} — {ADDONS[idx].pct ? ADDONS[idx].unit : `${fmt(ADDONS[idx].monthlyCost)} ${ADDONS[idx].unit}`}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* CTA */}
+          <div className="cta-wrap">
+            <button className="cta-btn" onClick={() => setShowProposal(!showProposal)}>
+              {showProposal ? "Hide Proposal Summary" : "Generate Proposal Summary"}
+            </button>
+          </div>
+
+          {/* Proposal */}
+          {showProposal && (
+            <div className="proposal">
+              <div className="proposal-title">Four Walls — Custom Proposal Summary</div>
+              <div className="proposal-date">
+                Prepared {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+              </div>
+              <div className="proposal-body">
+                <p>
+                  Thank you for considering Four Walls for your facility's cleaning needs. Based on your{" "}
+                  <strong>{sqft.toLocaleString()} sq ft {data.label.toLowerCase()}</strong> facility, we recommend our{" "}
+                  <strong>{tier.name}</strong> tier at <strong>{tier.frequency}</strong> service.
+                </p>
+                <p>
+                  Your estimated monthly investment is <strong>{fmt(totalMonthly)}</strong> ({fmt(totalMonthly * 12)}/year)
+                  {tier.discount > 0 && (
+                    <span>
+                      {" "}with a <strong>{tier.discount}% contract discount</strong> saving you{" "}
+                      {fmt(Math.round(totalMonthly * 12 * (tier.discount / 100)))}/year
+                    </span>
+                  )}
+                  . This includes a <strong>{tier.sla}</strong> response SLA and{" "}
+                  <strong>{tier.contract}</strong> contract terms.
+                </p>
+                {selectedAddons.length > 0 && (
+                  <p>
+                    Your package includes the following add-on services:{" "}
+                    {selectedAddons.map((idx, i) => (
+                      <span key={idx}>{i > 0 && ", "}<strong>{ADDONS[idx].name}</strong></span>
+                    ))}.
+                  </p>
+                )}
+                <p>
+                  <strong>Next steps:</strong> Call us today to schedule your complimentary facility walkthrough.
+                  We'll finalize your custom scope of work and lock in your exact monthly rate — no obligation, no surprises.
+                </p>
+              </div>
+              <div className="proposal-guarantee">
+                <div className="proposal-guarantee-title">The Four Walls Guarantee</div>
+                <div className="proposal-guarantee-text">
+                  If you're not satisfied with any cleaning visit, we'll re-clean within 24 hours at no additional cost.
+                  Our Essential tier is month-to-month — you can cancel anytime with 30 days' notice. We earn your business every single visit.
+                </div>
+              </div>
+              <div className="proposal-cta-wrap">
+                <div className="proposal-cta-label">Ready to get started?</div>
+                <a href="tel:9096004005" className="proposal-cta-btn">Call (909) 600-4005</a>
+                <div className="proposal-cta-sub">Free walkthrough • Custom quote • No obligation</div>
+              </div>
+            </div>
+          )}
+
+          <div className="footer">
+            All estimates are approximate. Final pricing confirmed after facility walkthrough. &copy; 2026 Four Walls
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<FourWallsCalculator />);
+  </script>
+</body>
+</html>
