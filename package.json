@@ -1,0 +1,26 @@
+{
+  "name": "reddit-radar",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reddit Radar for Baader — scans 20 AI/building-in-public subreddits at 6am PST, queues saves locally, generates 5 hook angles per post in Jesse's Oracle voice, and flushes to Notion + Gmail.",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "scan": "node server/scripts/scan.js",
+    "flush": "node server/scripts/flush.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@notionhq/client": "^2.2.15",
+    "better-sqlite3": "^11.3.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.15"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
