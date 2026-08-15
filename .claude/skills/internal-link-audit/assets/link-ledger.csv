@@ -1,0 +1,4 @@
+source_url,destination_url,anchor_text,reader_reason,link_type,topic,owner,status,date_added,last_checked
+https://example.com/blog/onboarding-drop-off,https://example.com/product/analytics,see where users drop off,Reader has just learned drop-off points exist and needs the tool that finds them,supporting-to-money,activation,,planned,,
+https://example.com/blog/events-to-track,https://example.com/blog/onboarding-drop-off,finding your drop-off points,Next question after choosing which events to track,supporting-to-supporting,activation,,planned,,
+https://example.com/blog/onboarding-drop-off,https://example.com/guides/activation,activation metrics guide,Reader needs the broader framing this article sits inside,supporting-to-pillar,activation,,planned,,

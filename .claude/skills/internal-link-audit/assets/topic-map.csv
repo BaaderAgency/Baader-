@@ -1,0 +1,6 @@
+topic,page_role,question_answered,working_title,url,parent_pillar,destination_money_page,qualify_verdict,contextual_inbound_count,ranks_for_queries,owner,status,last_link_check
+activation,pillar,How do I find where new users drop off?,The activation metrics guide,https://example.com/guides/activation,,https://example.com/product/analytics,keep,0,0,,planned,
+activation,supporting,Which product events should I track?,Events to track in your first 30 days,https://example.com/blog/events-to-track,https://example.com/guides/activation,https://example.com/product/analytics,keep,1,2,,live,
+activation,supporting,Where exactly are users dropping off?,Finding onboarding drop-off points,https://example.com/blog/onboarding-drop-off,https://example.com/guides/activation,https://example.com/product/analytics,keep,0,0,,live,
+activation,money,,Product analytics,https://example.com/product/analytics,,,keep,2,4,,live,
+activation,supporting,,Old post superseded by the pillar,https://example.com/blog/2021-activation-tips,,,retire,0,0,,live,
