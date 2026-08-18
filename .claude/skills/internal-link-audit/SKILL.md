@@ -18,6 +18,21 @@ Read `references/evidence.md` before quoting any statistic to a client. It grade
 
 **The framing that sells and is true:** most pages aren't losing, they were never entered. 64.6% of pages have no external backlink at all, so internal links are the only lever available on two-thirds of a site.
 
+## Where this sits in the SEO workflow
+
+This skill is not "before" or "after" a general SEO route — it **splits it in two**, and sits in the middle as a filter.
+
+1. **SEO route first, for data acquisition only.** Site audit crawl, Semrush/Ahrefs pull, Search Console connection, competitor set. This skill consumes those outputs; it does not duplicate them. Do not run the on-page or article-optimization part of the SEO route yet.
+2. **This skill second.** Its step 4 (qualify before you link) decides which pages are kept, consolidated, or retired. That verdict is the gate for everything downstream.
+3. **SEO route again, for on-page and article optimization** — but only on pages that survived qualification.
+
+The reason for the order is cost. Optimizing an article before the link audit means spending hours on pages that step 4 is about to consolidate or delete. The qualification verdict is what stops that waste, so it has to land before any content work starts.
+
+Two exceptions:
+
+- **Sitemap generation runs after this skill**, always. Consolidation and retirement change the URL set, so a sitemap built beforehand is stale on delivery.
+- **AEO / answer-engine work is independent** and can run at any point. It doesn't depend on the internal link graph and this skill doesn't touch it.
+
 ## Before starting
 
 Confirm with the user:
